@@ -76,19 +76,22 @@ def check_states():
         memory_states = cursor.fetchall()
         cursor.close()
         desconectarDB()
-    
-        list = []
+
+        state_list = []
         for memory_state in memory_states:
-            list.append({
+            state_dict = {
                 'id': memory_state[0],
                 'date': memory_state[1],
                 'time': memory_state[2],
                 'total_memory_used': memory_state[3],
                 'memory_percentage': memory_state[4]
-            })
-        return jsonify(list), 200
+            }
+            state_list.append(state_dict)
+
+        return jsonify(state_list), 200
     except Exception as ex:
         print("ERROR:", ex)
+
 
 #Consulta a event_info devuelve la información de todos registros que superaron el limite establesido 
 @app.route("/event_info")
@@ -101,22 +104,20 @@ def check_info():
         cursor.close()
         desconectarDB()
 
-        list = []
+        event_list = [] 
         for event_info in events_info:
-            list.append({
+            event_dict = {
                 'event_id': event_info[0],
                 'trafic_memory_state_id': event_info[1],
                 'process_id': event_info[2],
                 'user_name': event_info[3],
                 'user_query': event_info[4],
                 'memory_percentage': event_info[5]                
-            })
-        return jsonify(list), 200
+            }
+            event_list.append(event_dict)
+        return jsonify(event_list), 200  
     except Exception as ex:
         print("ERROR:", ex)
-
-
-
 
 
 # main
