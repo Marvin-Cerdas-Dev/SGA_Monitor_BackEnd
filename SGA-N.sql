@@ -20,6 +20,16 @@ CREATE TABLE event_info (
 CREATE SEQUENCE state_seq;
 CREATE SEQUENCE event_seq;
 
+ALTER TABLE traffic_memory_state
+ADD memory_percentage NUMBER;
+
+DESC traffic_memory_state;
+
+ALTER TABLE event_info
+ADD memory_percentage NUMBER;
+
+DESC event_info;
+
 CREATE OR REPLACE PROCEDURE memory_checker AS
  t_state_id NUMBER;
  size_cache NUMBER;
@@ -32,7 +42,7 @@ CREATE OR REPLACE PROCEDURE memory_checker AS
  consulta CLOB;
  m_percentage NUMBER;
 BEGIN
- SELECT VALUE INTO size_cache FROM sga_info WHERE NAME = 'Database Buffers';
+ SELECT VALUE INTO size_cache FROM V$SGA WHERE NAME = 'Database Buffers';
 size_cache_mb := size_cache / 1024 / 1024;
  SELECT COUNT(*) INTO v_count_xcur_cur FROM V$BH WHERE STATUS IN ('xcur', 'cur');
  used := ROUND((v_count_xcur_cur * 8192)/1024/1024, 2);
@@ -54,16 +64,6 @@ LOOP
 COMMIT;
  END IF;
 END memory_checker;
-
-ALTER TABLE traffic_memory_state
-ADD memory_percentage NUMBER;
-
-DESC traffic_memory_state;
-
-ALTER TABLE event_info
-ADD memory_percentage NUMBER;
-
-DESC event_info;
 
 BEGIN
  DBMS_SCHEDULER.CREATE_JOB (
