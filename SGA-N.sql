@@ -1,5 +1,5 @@
 CREATE OR REPLACE PACKAGE global_constants AS
-    TRAFFIC_LIGHT_CONST NUMBER := 30;
+    TRAFFIC_LIGHT_CONST NUMBER := 85;
 END global_constants;
 
 CREATE TABLE traffic_memory_state (
@@ -48,10 +48,10 @@ size_cache_mb := size_cache / 1024 / 1024;
  used := ROUND((v_count_xcur_cur * 8192)/1024/1024, 2);
  unused := size_cache_mb - used;
  m_percentage := (used / size_cache_mb) * 100;
- IF m_percentage > global_constants.TRAFFIC_LIGHT_CONST THEN
  t_state_id := state_seq.NEXTVAL;    
  INSERT INTO traffic_memory_state (t_id, t_date, t_time, total_memory_used, memory_percentage)
  VALUES (t_state_id, SYSDATE, SYSTIMESTAMP, used, ROUND(m_percentage, 2));
+ IF m_percentage > global_constants.TRAFFIC_LIGHT_CONST THEN
  FOR rec IN (SELECT s.sid, s.USERNAME, 
  (SELECT sql_text FROM V$SQL WHERE SQL_ID = s.SQL_ID) AS query, 
  (SELECT memory_percentage FROM traffic_memory_state WHERE t_id = t_state_id) AS m_per
@@ -79,6 +79,11 @@ END;
 
 BEGIN
   DBMS_SCHEDULER.run_job('check_traffic_job', FALSE);
+END;
+/
+
+BEGIN
+  DBMS_SCHEDULER.run_job('check_traffic_job', TRUE);
 END;
 /
 

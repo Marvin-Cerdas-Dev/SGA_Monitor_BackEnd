@@ -92,7 +92,6 @@ def check_states():
     except Exception as ex:
         print("ERROR:", ex)
 
-
 #Consulta a event_info devuelve la información de todos registros que superaron el limite establesido 
 @app.route("/event_info")
 def check_info():
@@ -118,7 +117,6 @@ def check_info():
         return jsonify(event_list), 200  
     except Exception as ex:
         print("ERROR:", ex)
-
 
 # main
 if __name__ == "__main__":
