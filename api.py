@@ -115,7 +115,8 @@ def check_info():
                 'memory_percentage': event_info[6]                
             }
             event_list.append(event_dict)
-        return jsonify(event_list), 200  
+        
+        return jsonify(event_list), 200  #Debe estar una linea abajo para evitar errores.
     except Exception as ex:
         print("ERROR:", ex)
 
