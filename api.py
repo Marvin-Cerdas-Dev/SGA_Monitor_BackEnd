@@ -107,11 +107,12 @@ def check_info():
         for event_info in events_info:
             event_dict = {
                 'event_id': event_info[0],
-                'trafic_memory_state_id': event_info[1],
-                'process_id': event_info[2],
-                'user_name': event_info[3],
-                'user_query': event_info[4],
-                'memory_percentage': event_info[5]                
+                'event_date': event_info[1],
+                'trafic_memory_state_id': event_info[2],
+                'process_id': event_info[3],
+                'user_name': event_info[4],
+                'user_query': event_info[5],
+                'memory_percentage': event_info[6]                
             }
             event_list.append(event_dict)
         return jsonify(event_list), 200  

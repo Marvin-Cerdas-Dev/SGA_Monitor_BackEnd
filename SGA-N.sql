@@ -6,29 +6,26 @@ CREATE TABLE traffic_memory_state (
     t_id NUMBER PRIMARY KEY,
     t_date DATE,
     t_time TIMESTAMP,
-    total_memory_used NUMBER
+    total_memory_used NUMBER,
+    memory_percentage NUMBER
 );
-
-CREATE TABLE event_info (
-    event_id NUMBER PRIMARY KEY,
-    t_id NUMBER REFERENCES traffic_memory_state(t_id),
-    process_id NUMBER,
-    user_name VARCHAR2(100),
-    user_query VARCHAR2(2000)
-);
-
-CREATE SEQUENCE state_seq;
-CREATE SEQUENCE event_seq;
-
-ALTER TABLE traffic_memory_state
-ADD memory_percentage NUMBER;
 
 DESC traffic_memory_state;
 
-ALTER TABLE event_info
-ADD memory_percentage NUMBER;
+CREATE TABLE event_info (
+    event_id NUMBER PRIMARY KEY,
+    event_date DATE,
+    t_id NUMBER REFERENCES traffic_memory_state(t_id),
+    process_id NUMBER,
+    user_name VARCHAR2(100),
+    user_query VARCHAR2(2000),
+    memory_percentage NUMBER
+);
 
 DESC event_info;
+
+CREATE SEQUENCE state_seq;
+CREATE SEQUENCE event_seq;
 
 CREATE OR REPLACE PROCEDURE memory_checker AS
  t_state_id NUMBER;
@@ -58,8 +55,8 @@ size_cache_mb := size_cache / 1024 / 1024;
  FROM V$SESSION s 
 WHERE s.USERNAME IS NOT NULL AND s.SQL_ID IS NOT NULL) 
 LOOP
- INSERT INTO event_info (event_id, t_id, process_id, user_name, user_query, memory_percentage)
- VALUES (event_seq.NEXTVAL, t_state_id, rec.sid, rec.USERNAME, rec.query, rec.m_per);
+ INSERT INTO event_info (event_id, event_date, t_id, process_id, user_name, user_query, memory_percentage)
+ VALUES (event_seq.NEXTVAL, SYSTIMESTAMP, t_state_id, rec.sid, rec.USERNAME, rec.query, rec.m_per);
  END LOOP;
 COMMIT;
  END IF;
@@ -75,7 +72,6 @@ BEGIN
  enabled => TRUE
  );
 END;
-
 
 BEGIN
   DBMS_SCHEDULER.run_job('check_traffic_job', FALSE);
