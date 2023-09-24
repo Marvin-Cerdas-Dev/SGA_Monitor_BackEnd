@@ -123,6 +123,42 @@ def check_info():
         error_message = "Error al consultar la base de datos: {}".format(ex)
         return jsonify({'error': error_message}), 500  # Devuelve un mensaje de error y código de estado 500 en caso de excepción.
 
+#obtener datos de los tablespace
+@app.route("/tablespaces_volumetria")
+def tablespaces_volumetria():
+    try:
+        conectarDB()
+        cursor = DB_CONNECTION.cursor()
+
+        # Definir un parámetro de cursor de salida
+        output_cursor = cursor.var(cx_Oracle.CURSOR)
+
+        # Llamar al procedimiento almacenado que recibe el cursor
+        cursor.callproc("tablespaces_volumetria", (output_cursor,))
+
+        # Recuperar los resultados del cursor de salida
+        result = output_cursor.getvalue()
+
+        tablespace_list = [] 
+        for row in result:
+            print(row)
+            tablespace = {
+                'tablespace': row[0],
+                'estado': row[1],
+                'MB tamano': row[2],
+                'MB usados': row[3],
+                'MB libres': row[4],
+                #'incremento': row[5],
+                'fichero de datos': row[6]                
+            }
+            tablespace_list.append(tablespace)
+
+        cursor.close()
+        desconectarDB()
+        return jsonify(tablespace_list), 200
+    except Exception as ex:
+        print("ERROR:", ex)
+
 # main
 if __name__ == "__main__":
     app.run(debug=True)
