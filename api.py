@@ -62,6 +62,7 @@ def consulta1():
                 'nombre': cliente[1],
                 'saldo': cliente[2],
             })
+        
         return jsonify(list), 200
     except Exception as ex:
         print("ERROR:", ex)
@@ -90,7 +91,8 @@ def check_states():
 
         return jsonify(state_list), 200
     except Exception as ex:
-        print("ERROR:", ex)
+        error_message = "Error al consultar la base de datos: {}".format(ex)
+        return jsonify({'error': error_message}), 500  # Devuelve un mensaje de error y código de estado 500 en caso de excepción.
 
 #Consulta a event_info devuelve la información de todos registros que superaron el limite establesido 
 @app.route("/event_info")
@@ -118,7 +120,8 @@ def check_info():
         
         return jsonify(event_list), 200  #Debe estar una linea abajo para evitar errores.
     except Exception as ex:
-        print("ERROR:", ex)
+        error_message = "Error al consultar la base de datos: {}".format(ex)
+        return jsonify({'error': error_message}), 500  # Devuelve un mensaje de error y código de estado 500 en caso de excepción.
 
 # main
 if __name__ == "__main__":
