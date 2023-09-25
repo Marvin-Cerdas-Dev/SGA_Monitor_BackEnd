@@ -141,7 +141,6 @@ def tablespaces_volumetria():
 
         tablespace_list = [] 
         for row in result:
-            print(row)
             tablespace = {
                 'tablespace_name': row[0],
                 'state': row[1],
@@ -150,8 +149,9 @@ def tablespaces_volumetria():
                 'mb_free': row[4],
                 'per_used': round((row[3] / row[2]) * 100, 2),
                 'per_free': round((row[4] / row[2]) * 100, 2),
-                #'incremento': row[5],
-                'fichero de datos': row[6]                
+                'fichero_de_datos': row[5],
+                'num_inserts': row[6],      
+                'hwr_mb': row[7],            
             }
             tablespace_list.append(tablespace)
 
@@ -160,6 +160,7 @@ def tablespaces_volumetria():
         return jsonify(tablespace_list), 200
     except Exception as ex:
         print("ERROR:", ex)
+        return jsonify({'error': str(ex)}), 500
 
 # main
 if __name__ == "__main__":
