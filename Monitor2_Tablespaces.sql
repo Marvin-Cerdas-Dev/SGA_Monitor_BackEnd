@@ -99,7 +99,7 @@ OPEN tablespaces_info FOR
         t.tablespace_name          "Tablespace",
         t.status                   "Estado",
         round(MAX(d.bytes) / 1024 / 1024,
-              2)                   "MB Tamaño",
+              2)                   "MB Tamano",
         round((MAX(d.bytes) / 1024 / 1024) -(SUM(decode(f.bytes, NULL, 0, f.bytes)) / 1024 / 1024),
               2)                   "MB Usados",
         round(SUM(decode(f.bytes, NULL, 0, f.bytes)) / 1024 / 1024,
@@ -129,8 +129,8 @@ END tablespaces_volumetria;
  
  --CALCULO DE PROXIMIDAD DE DIAS (Por hacer)
  
- --Tiempo en días = (Tamaño Máximo del Tablespace - Tamaño Actual del Tablespace) / Tasa de Crecimiento Diaria
---Tasa de Crecimiento Diaria = (Tamaño Final - Tamaño Inicial) / Número de Días
+ --Tiempo en dï¿½as = (Tamaï¿½o Mï¿½ximo del Tablespace - Tamaï¿½o Actual del Tablespace) / Tasa de Crecimiento Diaria
+--Tasa de Crecimiento Diaria = (Tamaï¿½o Final - Tamaï¿½o Inicial) / Nï¿½mero de Dï¿½as
 
 --Tabla que registra datos de un tablespace en un momento dado
 CREATE TABLE ts_historial_crecimiento (

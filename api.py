@@ -143,11 +143,13 @@ def tablespaces_volumetria():
         for row in result:
             print(row)
             tablespace = {
-                'tablespace': row[0],
-                'estado': row[1],
-                'MB tamano': row[2],
-                'MB usados': row[3],
-                'MB libres': row[4],
+                'tablespace_name': row[0],
+                'state': row[1],
+                'mb_size': row[2],
+                'mb_used': row[3],
+                'mb_free': row[4],
+                'per_used': round((row[3] / row[2]) * 100, 2),
+                'per_free': round((row[4] / row[2]) * 100, 2),
                 #'incremento': row[5],
                 'fichero de datos': row[6]                
             }
