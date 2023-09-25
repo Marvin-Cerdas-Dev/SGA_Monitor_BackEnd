@@ -6,7 +6,7 @@ FROM user_tables  ABS;
 SELECT table_name, column_name, data_type
 FROM user_tab_columns;
 
---------- Tamaño de los datos de las tablas:
+--------- Tamaï¿½o de los datos de las tablas:
 SELECT table_name, num_rows, round((blocks * 8 * 1024) / (1024 * 1024), 2) AS size_mb
 FROM user_tables;
 
@@ -19,14 +19,14 @@ SELECT table_name, constraint_name, constraint_type
 FROM user_constraints
 WHERE constraint_type IN ('P', 'U', 'R', 'C');
 
---------- Obtener información sobre los tablespaces utilizados por los usuarios y su tamaño máximo:
+--------- Obtener informaciï¿½n sobre los tablespaces utilizados por los usuarios y su tamaï¿½o mï¿½ximo:
 SELECT tablespace_name, 
        SUM(user_bytes) / (1024 * 1024) AS size_mb,
        MAX(bytes) / (1024 * 1024) AS max_size_mb
 FROM dba_data_files
 GROUP BY tablespace_name;
 
---------- Calcular cuánto espacio se está utilizando en cada tablespace:
+--------- Calcular cuï¿½nto espacio se estï¿½ utilizando en cada tablespace:
 SELECT tablespace_name, 
        SUM(bytes) / (1024 * 1024) AS used_space_mb
 FROM dba_segments
@@ -54,3 +54,40 @@ CREATE TABLESPACE tsp2 DATAFILE 'F:\tablespaces\tsp2.dbf' SIZE 200M;
 CREATE TABLESPACE tsp3 DATAFILE 'F:\tablespaces\tsp3.dbf' SIZE 200M;
 CREATE TABLESPACE tsp4 DATAFILE 'F:\tablespaces\tsp4.dbf' SIZE 200M;
 CREATE TABLESPACE tsp5 DATAFILE 'F:\tablespaces\tsp5.dbf' SIZE 200M;
+
+
+CREATE OR REPLACE PROCEDURE tablespaces_volumetria (
+    tablespaces_info OUT SYS_REFCURSOR
+) 
+IS
+BEGIN
+OPEN tablespaces_info FOR
+    SELECT
+        t.tablespace_name          "Tablespace",
+        t.status                   "Estado",
+        round(MAX(d.bytes) / 1024 / 1024, 2) "TamaÃ±o MB",
+        round((MAX(d.bytes) / 1024 / 1024) -(SUM(decode(f.bytes, NULL, 0, f.bytes)) / 1024 / 1024), 2) "Usados MB ",
+        round(SUM(decode(f.bytes, NULL, 0, f.bytes)) / 1024 / 1024, 2) "Libres MB ",
+        substr(d.file_name, 1, 80) "Fichero de datos",
+        (SELECT COUNT(*) FROM DBA_TAB_MODIFICATIONS WHERE TABLE_NAME = t.tablespace_name AND TO_DATE(TIMESTAMP, 'DD/MM/YY') = TO_DATE(SYSDATE - 1, 'YYYY-MM-DD')) "Num Inserts de ayer",
+        (SELECT ROUND(SUM(bytes) / 1024 / 1024, 4) FROM dba_segments WHERE tablespace_name = t.tablespace_name) "HWR_mb"  
+    FROM
+        dba_free_space  f,
+        dba_data_files  d,
+        dba_tablespaces t
+    WHERE
+        t.tablespace_name = d.tablespace_name
+        AND f.tablespace_name (+) = d.tablespace_name
+        AND f.file_id (+) = d.file_id
+    GROUP BY
+        t.tablespace_name,
+        d.file_name,
+        t.pct_increase,
+        t.status
+    ORDER BY
+        1,
+        3 DESC;
+
+END tablespaces_volumetria;
+/
+ 
