@@ -1,6 +1,6 @@
 # 📊 SGA Monitor - Backend
 
-Welcome to the **SGA Monitor Backend** 📈, a system designed to connect with an Oracle database to monitor and analyze the status of the **System Global Area (SGA)** in real-time. This backend provides various endpoints to retrieve key data on memory usage, tablespaces, and system events, facilitating in-depth performance analysis for database administrators.
+Welcome to the **SGA Monitor Backend**, a system designed to connect with an Oracle database to monitor and analyze the status of the **System Global Area (SGA)** in real-time. This backend provides various endpoints to retrieve key data on memory usage, tablespaces, and system events, facilitating in-depth performance analysis for database administrators.
 
 ---
 
