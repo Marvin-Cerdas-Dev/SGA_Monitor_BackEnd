@@ -87,10 +87,10 @@ The SGA Monitor Backend exposes the following endpoints:
    ```
 3. The backend will be accessible at `http://localhost:5000`.
 
-## 🤝 Contact
-Marvin Cerdas - [GitHub Profile](https://github.com/Marvin-Cerdas-Dev)
-
 ---
 
 ## 📜 License
 This project is licensed under the [MIT License](LICENSE).
+
+## 🤝 Contact
+Marvin Cerdas - [GitHub Profile](https://github.com/Marvin-Cerdas-Dev)
